@@ -1,0 +1,106 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyMz5F93hA/RozjYh4lbrr1H",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/annmarry01234/Codsoft/blob/main/Codectech_cybersecurity\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import re\n",
+        "\n",
+        "def check_password_strength(password):\n",
+        "    length_score = len(password) * 4\n",
+        "    uppercase_score = len(re.findall(r'[A-Z]', password)) * 2\n",
+        "    lowercase_score = len(re.findall(r'[a-z]', password)) * 2\n",
+        "    digit_score = len(re.findall(r'\\d', password)) * 4\n",
+        "    symbol_score = len(re.findall(r'[^A-Za-z0-9]', password)) * 6\n",
+        "    middle_number_symbol_score = len(re.findall(r'(?:(?<=\\d)|(?<=[^A-Za-z0-9]))[A-Za-z](?:(?=\\d)|(?=[^A-Za-z0-9]))', password)) * 2\n",
+        "    repeat_characters_penalty = sum([max(0, password.count(char) - 1) for char in set(password)]) * 2\n",
+        "    consecutive_uppercase_penalty = len(re.findall(r'[A-Z]{2,}', password)) * 2\n",
+        "    consecutive_lowercase_penalty = len(re.findall(r'[a-z]{2,}', password)) * 2\n",
+        "    consecutive_digits_penalty = len(re.findall(r'\\d{2,}', password)) * 2\n",
+        "    sequential_letters_penalty = 0\n",
+        "    for i in range(len(password) - 2):\n",
+        "        substring = password[i:i+3].lower()\n",
+        "        if len(set(substring)) == 3 and (ord(substring[1]) == ord(substring[0]) + 1 and ord(substring[2]) == ord(substring[1]) + 1):\n",
+        "            sequential_letters_penalty += 3\n",
+        "    sequential_digits_penalty = 0\n",
+        "    for i in range(len(password) - 2):\n",
+        "        substring = password[i:i+3]\n",
+        "        if substring.isdigit() and int(substring[1]) == int(substring[0]) + 1 and int(substring[2]) == int(substring[1]) + 1:\n",
+        "            sequential_digits_penalty += 3\n",
+        "    sequential_symbols_penalty = 0\n",
+        "    symbols = \"!@#$%^&*()-+_{}[]|\\:;'<>,.?/\"\n",
+        "    for i in range(len(password) - 2):\n",
+        "        substring = password[i:i+3]\n",
+        "        if all(char in symbols for char in substring):\n",
+        "             # Check for sequential symbols (e.g., !@#, $%^)\n",
+        "            if ord(substring[1]) == ord(substring[0]) + 1 and ord(substring[2]) == ord(substring[1]) + 1:\n",
+        "                sequential_symbols_penalty += 3\n",
+        "\n",
+        "\n",
+        "    score = (length_score + uppercase_score + lowercase_score + digit_score + symbol_score +\n",
+        "             middle_number_symbol_score - repeat_characters_penalty - consecutive_uppercase_penalty -\n",
+        "             consecutive_lowercase_penalty - consecutive_digits_penalty - sequential_letters_penalty -\n",
+        "             sequential_digits_penalty - sequential_symbols_penalty)\n",
+        "\n",
+        "    if score < 20:\n",
+        "        return \"Very Weak\"\n",
+        "    elif 20 <= score < 40:\n",
+        "        return \"Weak\"\n",
+        "    elif 40 <= score < 60:\n",
+        "        return \"Moderate\"\n",
+        "    elif 60 <= score < 80:\n",
+        "        return \"Strong\"\n",
+        "    else:\n",
+        "        return \"Very Strong\"\n",
+        "\n",
+        "\n",
+        "password_to_check = input(\"Enter password\")\n",
+        "strength = check_password_strength(password_to_check)\n",
+        "print(f\"The password '{password_to_check}' is: {strength}\")\n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "5ZYOEQno5RMg",
+        "outputId": "0ae0bd7b-629c-412e-d5f9-885de2394685"
+      },
+      "execution_count": 17,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Enter passwordAnnmarry@1234\n",
+            "The password 'Annmarry@1234' is: Strong\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
